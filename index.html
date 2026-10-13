@@ -18,10 +18,11 @@
     --ink: #f5f5f3;
     --muted: #b7b0aa;
     --line: rgba(255,255,255,.08);
-    --sheet-bg: #0f0f10;
-    --card: #151515;
-    --tile: #1d1d1d;
-    --grad: linear-gradient(90deg, #0a0a0a 0%, #191919 35%, #d4af37 100%);
+    --sheet-bg: #111111;
+    --card: #1a1a1a;
+    --tile: #2a2a2a;
+    --soft: #eaeaea;
+    --grad: linear-gradient(90deg, #111111 0%, #3b3b3b 45%, #ffffff 100%);
     --ease: cubic-bezier(.32, .72, 0, 1);
     --dur: 380ms;
     box-sizing: border-box;
@@ -38,7 +39,7 @@
   body {
     margin: 0; height: auto;
     background:
-      radial-gradient(circle at top, rgba(212,175,55,.14), transparent 26%),
+      radial-gradient(circle at top, rgba(255,255,255,.06), transparent 26%),
       #050505;
     display: grid; place-items: center;
     font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -158,46 +159,73 @@
   .group { background: var(--card); border-radius: 20px; overflow: hidden; }
   .section-title { margin: 24px 4px 10px; font-size: 15px; font-weight: 700; }
 
-  .product-grid {
-    display: grid; gap: 12px; padding: 12px; background: transparent; border-radius: 0; overflow: visible;
+  .product-options {
+    display: grid; gap: 12px; padding: 4px 0 0;
   }
-  .product-card {
-    background: var(--card); border-radius: 18px; overflow: hidden; box-shadow: 0 8px 22px rgba(16, 6, 12, 0.08);
+  .product-option {
+    background: var(--card); border-radius: 18px; padding: 14px 14px 12px; box-shadow: 0 8px 22px rgba(16, 6, 12, 0.08);
   }
-  .product-card img {
-    display: block; width: 100%; height: 220px; object-fit: cover; background: #f0e0e5;
+  .product-option-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px;
   }
-  .product-meta {
-    padding: 14px 16px 16px; display: grid; gap: 2px;
+  .product-name {
+    margin: 0; font-size: 15px; font-weight: 800; letter-spacing: -.01em;
   }
-  .product-meta strong {
-    font-size: 15px; font-weight: 800; letter-spacing: -.01em;
+  .product-price {
+    font-size: 14px; font-weight: 800; color: #f2d57f;
+    white-space: nowrap;
   }
-  .product-meta span {
-    font-size: 12px; color: var(--muted);
+  .product-features {
+    margin: 0 0 12px; padding-left: 18px; color: var(--muted); font-size: 12px; line-height: 1.55;
+  }
+  .product-order-btn {
+    width: 100%; height: 42px; border: 0; border-radius: 12px; font-weight: 800; background: var(--grad); color: #fff;
+  }
+
+  .reviews-wrap {
+    display: grid; gap: 12px; padding: 4px 0 0;
+  }
+  .review-summary {
+    background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    border: 1px solid var(--line);
+    border-radius: 18px; padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .review-score {
+    font-size: 26px; font-weight: 800; letter-spacing: -.04em;
+  }
+  .review-stars {
+    color: #f4d35e; letter-spacing: 2px; font-size: 14px;
+  }
+  .review-card {
+    background: var(--card); border-radius: 18px; padding: 14px 16px; box-shadow: 0 8px 22px rgba(16, 6, 12, 0.08);
+  }
+  .review-card strong {
+    display: block; font-size: 14px; margin-bottom: 6px;
+  }
+  .review-card p {
+    margin: 0; font-size: 12px; line-height: 1.6; color: var(--muted);
   }
 
   .faq-list {
-    display: grid; gap: 10px; padding: 10px 12px 12px; background: transparent; border-radius: 0; overflow: visible;
+    display: grid; gap: 10px; padding: 4px 0 0;
   }
   .faq-item {
     background: var(--card); border-radius: 16px; padding: 12px 14px; box-shadow: 0 6px 18px rgba(16, 6, 12, 0.06);
-  }
-  .faq-item img {
-    display: block; width: 100%; height: 180px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; background: #f0e0e5;
   }
   .faq-question {
     margin: 0 0 6px; font-size: 15px; font-weight: 800; line-height: 1.3;
   }
   .faq-answer {
-    margin: 0; font-size: 13px; line-height: 1.55; color: var(--muted);
+    margin: 0; font-size: 12px; line-height: 1.55; color: var(--muted);
   }
+
   .review-wrap {
     padding: 8px 0 0;
   }
   .review-button {
     width: 100%; height: 52px; border: 0; border-radius: 16px; font-weight: 800; background: var(--grad); color: #fff;
-    box-shadow: 0 14px 28px rgba(90, 7, 18, 0.2);
+    box-shadow: 0 14px 28px rgba(255,255,255,.1);
   }
 
   .row {
@@ -269,10 +297,16 @@
       <div class="group" id="details"></div>
       <h3 class="section-title">Social media</h3>
       <div class="group" id="socials"></div>
+
       <h3 class="section-title">Products</h3>
-      <div class="product-grid" id="products"></div>
+      <div class="product-options" id="productOptions"></div>
+
+      <h3 class="section-title">Reviews</h3>
+      <div class="reviews-wrap" id="reviews"></div>
+
       <h3 class="section-title">FAQ</h3>
       <div class="faq-list" id="faq"></div>
+
       <div class="review-wrap">
         <button class="review-button" type="button" id="leaveReview">Leave a review</button>
       </div>
@@ -510,38 +544,55 @@ const socialEntries = [
 
 document.getElementById('socials').append(...socialEntries);
 
-const productImages = [
-  'product/WhatsApp Image 2026-10-11 at 7.30.57 PM.jpeg'
+const reviewItems = [
+  {
+    name: 'Ariane T.',
+    text: 'The service felt premium and the layout was clean. It helped my business look more professional online.'
+  },
+  {
+    name: 'Mark L.',
+    text: 'Very easy to order and the customization was great. They responded fast and the design looked exactly how I wanted.'
+  },
+  {
+    name: 'Janelle R.',
+    text: 'I loved the quality and the details. The results made my page easier for customers to trust and reach.'
+  }
 ];
-const productsWrap = document.getElementById('products');
-productImages.forEach((src, index) => {
-  const article = document.createElement('article');
-  article.className = 'product-card';
-  article.innerHTML = `
-    <img src="${src}" alt="Onetap product ${index + 1}">
-    <div class="product-meta">
-      <strong>Onetap product</strong>
-      <span>Premium local service and lifestyle essentials</span>
-    </div>
+
+const reviewsWrap = document.getElementById('reviews');
+const reviewSummary = document.createElement('div');
+reviewSummary.className = 'review-summary';
+reviewSummary.innerHTML = `
+  <div>
+    <div class="review-score">4.9</div>
+    <div class="review-stars">★★★★★</div>
+  </div>
+  <div class="review-stars">Trusted by local customers</div>
+`;
+reviewsWrap.appendChild(reviewSummary);
+
+reviewItems.forEach(item => {
+  const card = document.createElement('div');
+  card.className = 'review-card';
+  card.innerHTML = `
+    <strong>${item.name}</strong>
+    <p>"${item.text}"</p>
   `;
-  productsWrap.appendChild(article);
+  reviewsWrap.appendChild(card);
 });
 
 const faqItems = [
   {
-    image: 'faq/840431903_122121899745472644_986702108616552243_n.jpg',
-    question: 'What is Onetap?',
-    answer: 'Onetap is a lifestyle and business connection brand built to help customers and partners discover simple, reliable solutions for everyday needs.'
+    question: 'How do I order?',
+    answer: 'You can choose your preferred package, tap the order button, and message us directly on Facebook to confirm your request.'
   },
   {
-    image: 'faq/825286818_122121899739472644_1771896882386086272_n.jpg',
-    question: 'How can I contact Onetap?',
-    answer: 'You can contact us through Facebook, Instagram, WhatsApp, or by calling our available numbers listed in the contact section.'
+    question: 'Do you offer customization?',
+    answer: 'Yes. We offer logo design, profile customization, layout setup, and other design support depending on the package you choose.'
   },
   {
-    image: 'faq/825271622_122122381509472644_2844501410843404043_n.jpg',
-    question: 'Can I leave a review?',
-    answer: 'Yes. You can leave a review on our Facebook page and share your experience with the Onetap community.'
+    question: 'Can I request a custom package?',
+    answer: 'Absolutely. If you want a package made for your business needs, send us a message and we can guide you with the best option.'
   }
 ];
 
@@ -550,11 +601,73 @@ faqItems.forEach(item => {
   const card = document.createElement('div');
   card.className = 'faq-item';
   card.innerHTML = `
-    <img src="${item.image}" alt="${item.question}">
     <h4 class="faq-question">${item.question}</h4>
     <p class="faq-answer">${item.answer}</p>
   `;
   faqWrap.appendChild(card);
+});
+
+const productOptions = [
+  {
+    name: 'ONETAP KEYCHAIN',
+    price: 'P 199',
+    features: [
+      'COMPACT TAP KEYCHAIN FOR QUICK SOCIAL SHARING',
+      'FREE CUSTOMIZATION LOGO DESIGN'
+    ]
+  },
+  {
+    name: 'ONETAP BUSINESS CARD',
+    price: 'P 299',
+    features: [
+      'PROFILE IMAGE CUSTOMIZATION',
+      'BASIC CUSTOMIZATION',
+      'LOGO ONLY CARD'
+    ]
+  },
+  {
+    name: 'VIP PACKAGE',
+    price: 'P 599',
+    features: [
+      'FULL CUSTOMIZATION',
+      'CONTACT & CARD',
+      'PROFILE IMAGE CUSTOMIZATION',
+      '4-6 IMAGE SCROLLING CAROUSEL'
+    ]
+  },
+  {
+    name: 'ONETAP SHOP STAND',
+    price: 'P 699',
+    features: [
+      '3 LINKS SOCIAL MEDIA TO CONNECT',
+      'FREE CUSTOMIZATION LAYOUT'
+    ]
+  }
+];
+
+const productOptionsWrap = document.getElementById('productOptions');
+productOptions.forEach(product => {
+  const card = document.createElement('div');
+  card.className = 'product-option';
+  card.innerHTML = `
+    <div class="product-option-header">
+      <h4 class="product-name">${product.name}</h4>
+      <span class="product-price">${product.price}</span>
+    </div>
+    <ul class="product-features">
+      ${product.features.map(feature => `<li>${feature}</li>`).join('')}
+    </ul>
+    <button class="product-order-btn" type="button">Direct message to order</button>
+  `;
+
+  const orderButton = card.querySelector('.product-order-btn');
+  orderButton.addEventListener('click', () => {
+    const message = `Hi! I want to order the ${product.name} (${product.price}).`;
+    const orderUrl = `https://m.me/${(S.facebookPage || S.facebook || 'onetap.nfc.ph').replace(/^https?:\/\/(?:www\.)?facebook\.com\//i, '').replace(/\/$/, '')}`;
+    window.open(`${orderUrl}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+  });
+
+  productOptionsWrap.appendChild(card);
 });
 
 document.getElementById('leaveReview').addEventListener('click', () => {
