@@ -3,783 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Profile</title>
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#050505">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Profile">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<title>OneTapLasPiñas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --page-bg: #050505;
-    --ink: #f5f5f3;
-    --muted: #b7b0aa;
-    --line: rgba(255,255,255,.08);
-    --sheet-bg: #111111;
-    --card: #1a1a1a;
-    --tile: #2a2a2a;
-    --soft: #eaeaea;
-    --grad: linear-gradient(90deg, #111111 0%, #3b3b3b 45%, #ffffff 100%);
-    --ease: cubic-bezier(.32, .72, 0, 1);
-    --dur: 380ms;
-    box-sizing: border-box;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) { --page-bg: #050505; }
-  }
-  :root[data-theme="dark"] { --page-bg: #050505; }
-
-  html { scroll-padding-top: env(safe-area-inset-top, 0px); height: 100%; }
-  *, *::before, *::after { box-sizing: inherit; }
-  body {
-    margin: 0; height: auto;
-    background:
-      radial-gradient(circle at top, rgba(255,255,255,.06), transparent 26%),
-      #050505;
-    display: grid; place-items: center;
-    font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    color: var(--ink);
-    -webkit-font-smoothing: antialiased;
-    overflow: auto;
-  }
-  button { font: inherit; color: inherit; cursor: pointer; }
-  :focus-visible { outline: 2px solid #ff5fa2; outline-offset: 2px; }
-  svg { display: block; }
-
-  /* ---------- Phone frame ---------- */
-  .app {
-    --p: 0;
-    position: relative;
-    width: min(390px, 100%);
-    height: min(844px, 100vh);
-    background: #000;
-    border-radius: 36px;
-    overflow: auto;
-    box-shadow: 0 30px 80px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.06);
-    isolation: isolate;
-  }
-  @media (max-width: 430px) {
-    .app { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
-    body { background: #000; }
-  }
-
-  /* ---------- Hero (dark card) ---------- */
-  .hero {
-    position: absolute; inset: 0;
-    background: var(--page-bg); color: #fff;
-    transform-origin: 50% 0;
-    transform: translateY(calc(var(--p) * 14px)) scale(calc(1 - var(--p) * .08));
-    border-radius: calc(var(--p) * 28px);
-    overflow: hidden;
-    touch-action: none;
-    user-select: none; -webkit-user-select: none;
-  }
-  .photo { position: absolute; left: 0; right: 0; top: 0; height: 62%; }
-  .photo svg, .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .shade {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg,
-      rgba(0,0,0,.38) 0%, rgba(0,0,0,0) 22%,
-      rgba(0,0,0,0) 34%, rgba(0,0,0,.8) 54%, #000 63%);
-  }
-  .dim { position: absolute; inset: 0; background: #000; opacity: calc(var(--p) * .55); pointer-events: none; }
-
-  .topbar {
-    position: absolute; top: 16px; left: 16px; right: 16px; z-index: 3;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .glass {
-    height: 40px; border: 0; color: #fff;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.08);
-    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    border-radius: 999px;
-  }
-  .glass.round { width: 40px; }
-  .glass.pill { padding: 0 16px; font-size: 14px; font-weight: 600; }
-  .glass svg { width: 20px; height: 20px; }
-  .glass.pill svg { width: 16px; height: 16px; }
-
-  .info { position: absolute; left: 0; right: 0; bottom: 0; padding: 0 24px 40px; z-index: 2; }
-  .name { margin: 0; font-size: 32px; line-height: 1.1; font-weight: 800; letter-spacing: -.02em; text-align: center; }
-  .handle { margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #9a97a6; font-size: 14px; }
-  .badge { width: 18px; height: 18px; }
-
-  .stats {
-    margin-top: 22px; display: grid; grid-template-columns: 1fr; background: rgba(255,255,255,.08);
-    border-radius: 20px; padding: 14px 0;
-  }
-  .stat { text-align: center; padding: 0 12px; }
-  .stat + .stat { display: none; }
-  .stat b { display: block; font-size: 18px; line-height: 1.2; font-weight: 800; letter-spacing: -.01em; overflow-wrap: anywhere; }
-  .stat span { display: block; margin-top: 2px; font-size: 12px; color: #d8c5c8; }
-
-  .follow {
-    margin-top: 18px; width: 100%; height: 56px; border: 0; border-radius: 999px;
-    background: var(--grad); color: #fff; font-size: 16px; font-weight: 700;
-    box-shadow: 0 18px 30px rgba(212,175,55,.18);
-    transition: transform 160ms ease, background 200ms ease;
-  }
-  .follow:active { transform: scale(.98); }
-  .follow.on { background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.3); }
-
-  .grab {
-    position: absolute; left: 50%; bottom: 6px; z-index: 3;
-    width: 72px; height: 28px; margin-left: -36px;
-    background: none; border: 0; padding: 0;
-    display: grid; place-items: center;
-  }
-  .grab i { display: block; width: 36px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.4); }
-
-  /* ---------- Detail sheet ---------- */
-  .sheet {
-    position: absolute; left: 0; right: 0; bottom: 0; top: 84px; z-index: 5;
-    background: var(--sheet-bg);
-    border-radius: 28px 28px 0 0;
-    box-shadow: 0 -12px 40px rgba(0,0,0,.3);
-    display: flex; flex-direction: column;
-    transform: translateY(calc((1 - var(--p)) * 100%));
-  }
-  .sheet-head { padding: 6px 20px 4px; touch-action: none; user-select: none; -webkit-user-select: none; }
-  .sheet-grab { display: grid; place-items: center; width: 100%; height: 24px; background: none; border: 0; padding: 0; }
-  .sheet-grab i { display: block; width: 44px; height: 5px; border-radius: 5px; background: #cfcbd6; }
-  .sheet-head h2 { margin: 4px 0 0; font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
-
-  .sheet-scroll {
-    flex: 1; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y;
-    padding: 10px 16px calc(28px + env(safe-area-inset-bottom, 0px));
-    -webkit-overflow-scrolling: touch;
-  }
-  .group { background: var(--card); border-radius: 20px; overflow: hidden; }
-  .section-title { margin: 24px 4px 10px; font-size: 15px; font-weight: 700; }
-
-  .product-options {
-    display: grid; gap: 12px; padding: 4px 0 0;
-  }
-  .product-option {
-    background: var(--card); border-radius: 18px; padding: 14px 14px 12px; box-shadow: 0 8px 22px rgba(16, 6, 12, 0.08);
-  }
-  .product-option-header {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px;
-  }
-  .product-name {
-    margin: 0; font-size: 15px; font-weight: 800; letter-spacing: -.01em;
-  }
-  .product-price {
-    font-size: 14px; font-weight: 800; color: #f2d57f;
-    white-space: nowrap;
-  }
-  .product-features {
-    margin: 0 0 12px; padding-left: 18px; color: var(--muted); font-size: 12px; line-height: 1.55;
-  }
-  .product-order-btn {
-    width: 100%; height: 42px; border: 0; border-radius: 12px; font-weight: 800; background: var(--grad); color: #fff;
-  }
-
-  .reviews-wrap {
-    display: grid; gap: 12px; padding: 4px 0 0;
-  }
-  .review-summary {
-    background: linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-    border: 1px solid var(--line);
-    border-radius: 18px; padding: 14px 16px;
-    display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  }
-  .review-score {
-    font-size: 26px; font-weight: 800; letter-spacing: -.04em;
-  }
-  .review-stars {
-    color: #f4d35e; letter-spacing: 2px; font-size: 14px;
-  }
-  .review-card {
-    background: var(--card); border-radius: 18px; padding: 14px 16px; box-shadow: 0 8px 22px rgba(16, 6, 12, 0.08);
-  }
-  .review-card strong {
-    display: block; font-size: 14px; margin-bottom: 6px;
-  }
-  .review-card p {
-    margin: 0; font-size: 12px; line-height: 1.6; color: var(--muted);
-  }
-
-  .faq-list {
-    display: grid; gap: 10px; padding: 4px 0 0;
-  }
-  .faq-item {
-    background: var(--card); border-radius: 16px; padding: 12px 14px; box-shadow: 0 6px 18px rgba(16, 6, 12, 0.06);
-  }
-  .faq-question {
-    margin: 0 0 6px; font-size: 15px; font-weight: 800; line-height: 1.3;
-  }
-  .faq-answer {
-    margin: 0; font-size: 12px; line-height: 1.55; color: var(--muted);
-  }
-
-  .review-wrap {
-    padding: 8px 0 0;
-  }
-  .review-button {
-    width: 100%; height: 52px; border: 0; border-radius: 16px; font-weight: 800; background: var(--grad); color: #fff;
-    box-shadow: 0 14px 28px rgba(255,255,255,.1);
-  }
-
-  .row {
-    display: flex; align-items: center; gap: 14px; width: 100%;
-    padding: 13px 16px; text-align: left; text-decoration: none; color: inherit;
-    background: none; border: 0;
-  }
-  .row + .row { border-top: 1px solid var(--line); }
-  .row.tap { transition: background 150ms ease; }
-  .row.tap:active { background: #f7f6fa; }
-  .ico { flex: none; width: 40px; height: 40px; border-radius: 12px; background: var(--tile); display: grid; place-items: center; }
-  .ico svg { width: 20px; height: 20px; }
-  .txt { flex: 1; min-width: 0; }
-  .lbl { display: block; font-size: 12px; color: var(--muted); }
-  .val { display: block; margin-top: 1px; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
-  .go { flex: none; color: #b3afbf; }
-  .go svg { width: 18px; height: 18px; }
-
-  /* ---------- Motion ---------- */
-  .app:not(.dragging) .hero,
-  .app:not(.dragging) .sheet { transition: transform var(--dur) var(--ease), border-radius var(--dur) var(--ease); }
-  .app:not(.dragging) .dim { transition: opacity var(--dur) var(--ease); }
-  @media (prefers-reduced-motion: reduce) {
-    .app:not(.dragging) .hero,
-    .app:not(.dragging) .sheet,
-    .app:not(.dragging) .dim { transition-duration: 1ms; }
-  }
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:#000;color-scheme:dark;--t:#1a1a1a;--t2:#262626;--m:#8c8c8c;--w:#fff}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px);background:#000}
+body{margin:0;background:#000;color:var(--w);font-family:"Outfit",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;margin:0 auto;padding:18px 18px 110px;display:flex;flex-direction:column;gap:12px}
+a{color:inherit;text-decoration:none}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.av{width:48px;height:48px;border-radius:50%;background:#222 center/cover;flex:none;display:grid;place-items:center;position:relative;overflow:hidden;font-size:11px;color:#aaa;cursor:pointer}
+.av input,.big input,.tile input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.search-unused{flex:1;background:var(--t);border-radius:14px;height:44px;display:flex;align-items:center;gap:8px;padding:0 12px;color:var(--m)}
+.search input{background:none;border:0;outline:0;color:var(--w);font:inherit;width:100%;font-size:15px}
+.ib{width:28px;height:28px;display:grid;place-items:center}
+svg{display:block}
+.box{background:var(--t);border-radius:22px;padding:16px}
+.box h4{margin:0;font-size:16px;font-weight:500}
+.box p{margin:4px 0 0;color:var(--m);font-size:14px}
+.wallet{padding:0;background:linear-gradient(135deg,#1d1d1d,#3a3a3a 55%,#1d1d1d);position:relative}
+.card{position:relative;margin:0;aspect-ratio:1.586;border-radius:22px;overflow:hidden;background:repeating-linear-gradient(45deg,#1b1b1d 0 4px,#0e0e10 4px 8px),#111;box-shadow:0 0 0 1px rgba(255,255,255,.12)}
+.card::before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.12) 50%,transparent 65%);background-size:250% 100%;animation:sh 6s linear infinite}
+@keyframes sh{from{background-position:150% 0}to{background-position:-100% 0}}
+.logo{position:absolute;left:6%;top:10%;display:flex;align-items:center;gap:8px;font-weight:600;font-size:clamp(16px,5vw,22px)}
+.dot{width:1.3em;height:1.3em;border:.22em solid #fff;border-radius:50%;position:relative}
+.dot::after{content:"";position:absolute;inset:.22em;background:#fff;border-radius:50%}
+.card small{position:absolute;left:calc(6% + 2.1em);top:30%;font-size:8px;letter-spacing:.2em;color:#8a8a90}
+.tap{position:absolute;right:6%;top:9%;text-align:right;font-size:8px;letter-spacing:.18em;color:#8a8a90}
+.tap svg{margin:0 0 8px auto}
+.big{position:absolute;left:50%;top:57%;width:40%;aspect-ratio:1;transform:translate(-50%,-50%);border:2px solid rgba(255,255,255,.55);border-radius:50%;cursor:pointer;display:grid;place-items:center;background:rgba(255,255,255,.06) center/cover no-repeat;box-shadow:0 0 0 6px rgba(255,255,255,.08),0 0 0 14px rgba(255,255,255,.04);overflow:hidden}
+.big span{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#bbb}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.chips{display:flex;gap:6px;margin-top:14px}
+.chip{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:600;font-size:17px}
+.bar{display:flex;gap:6px;margin-top:16px;height:26px}
+.bar i{border-radius:13px;display:block}
+.acts{display:block}
+.acts .act{width:100%;min-height:0;flex-direction:row;align-items:center;justify-content:flex-start;gap:14px;padding:12px 14px}
+.sq{background:var(--t);border-radius:18px;display:grid;place-items:center;height:56px;cursor:pointer;border:0;color:var(--w)}
+.sqs{display:grid;gap:12px;grid-template-rows:1fr 1fr}
+.act{background:var(--t);border-radius:22px;padding:14px;display:flex;flex-direction:column;justify-content:space-between;min-height:122px;border:0;color:var(--w);font:inherit;text-align:left;cursor:pointer}
+.act .ic{width:40px;height:40px;border-radius:12px;background:var(--t2);display:grid;place-items:center}
+.act b{font-weight:500;font-size:16px}
+.list .row{display:flex;gap:14px;align-items:center;padding:13px 0;border-top:1px solid var(--t2)}
+.list .row:first-of-type{border-top:0}
+.list .ic{width:38px;height:38px;border-radius:12px;background:var(--t2);display:grid;place-items:center;flex:none;font-size:15px}
+.list small{display:block;color:var(--m);font-size:12px}
+.list span{font-size:15px;word-break:break-word}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.tile{position:relative;aspect-ratio:1;border-radius:16px;overflow:hidden;cursor:pointer;display:grid;place-items:center;background-size:cover;background-position:center}
+.tile:nth-child(1){background-image:linear-gradient(135deg,#0a0a0a,#4a4a4a)}
+.tile:nth-child(2){background-image:linear-gradient(135deg,#d9d9d9,#8a8a8a)}
+.tile:nth-child(3){background-image:linear-gradient(135deg,#6a6a6a,#111)}
+.tile:nth-child(4){background-image:linear-gradient(135deg,#f0f0f0,#b0b0b0)}
+.tile em{font-style:normal;background:rgba(0,0,0,.5);padding:4px 10px;border-radius:14px;font-size:11px}
+.ref{position:relative;overflow:hidden}
+.ref .btn{display:inline-block;margin-top:14px;background:var(--t2);padding:7px 12px;border-radius:8px;font-size:14px}
+.orb{position:absolute;right:-20px;top:50%;transform:translateY(-50%);width:120px;height:120px;border-radius:50%;border:10px solid #2c2c2c;background:radial-gradient(circle at 30% 30%,#555,#111)}
+.orb::after{content:"";position:absolute;right:-6px;bottom:2px;width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#555,#000)}
+.ref .txt{max-width:62%;position:relative}
+.nav{position:fixed;left:0;right:0;bottom:0;padding:10px 18px calc(10px + env(safe-area-inset-bottom,0px));background:rgba(0,0,0,.86);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);z-index:5}
+.nav div{max-width:480px;margin:0 auto;display:flex;justify-content:space-between}
+.nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;color:#7a7a7a}
+.nav a.on{color:#fff}
+.toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,40px);background:#fff;color:#000;padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;transition:.3s;z-index:9}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 </style>
 </head>
 <body>
-
-<main class="app" id="app">
-
-  <!-- Card 1: photo profile -->
-  <section class="hero" id="hero" aria-label="Profile">
-    <div class="photo" id="photo"></div>
-    <div class="shade"></div>
-    <div class="dim"></div>
-
-    <div class="topbar"></div>
-
-    <div class="info">
-      <h1 class="name" id="heroName"></h1>
-      <div class="handle">
-        <span id="heroHandle"></span>
-        <svg class="badge" viewBox="0 0 24 24" role="img" aria-label="Verified">
-          <path fill="#3d9bff" d="M12 1.5l2.6 1.9 3.2-.1 1 3 2.6 1.9-1 3.1 1 3.1-2.6 1.9-1 3-3.2-.1L12 22.5l-2.6-1.9-3.2.1-1-3-2.6-1.9 1-3.1-1-3.1 2.6-1.9 1-3 3.2.1z"/>
-          <path d="M8 12.2l2.7 2.7L16 9.6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-
-      <div class="stats">
-        <div class="stat"><b id="companyStatA">Endless Connection</b><span></span></div>
-      </div>
-
-      <button class="follow" id="follow" type="button" aria-pressed="false">order </button>
-    </div>
-
-    <button class="grab" id="openBtn" type="button" aria-label="Show contact info"><i></i></button>
-  </section>
-
-  <!-- Card 2: detail panel -->
-  <section class="sheet" id="sheet" aria-label="Contact info" aria-hidden="true" inert>
-    <div class="sheet-head" id="sheetHead">
-      <button class="sheet-grab" id="closeBtn" type="button" aria-label="Back to profile"><i></i></button>
-      <h2>Contact info</h2>
-    </div>
-    <div class="sheet-scroll" id="list">
-      <div class="group" id="details"></div>
-      <h3 class="section-title">Social media</h3>
-      <div class="group" id="socials"></div>
-
-      <h3 class="section-title">Products</h3>
-      <div class="product-options" id="productOptions"></div>
-
-      <h3 class="section-title">Reviews</h3>
-      <div class="reviews-wrap" id="reviews"></div>
-
-      <h3 class="section-title">FAQ</h3>
-      <div class="faq-list" id="faq"></div>
-
-      <div class="review-wrap">
-        <button class="review-button" type="button" id="leaveReview">Leave a review</button>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<script>
-/* ---------- Default profile data ---------- */
-const normalizePhotoPath = value => {
-  if (!value || typeof value !== 'string') return '';
-  const cleaned = value.replace(/\\/g, '/').trim();
-  if (!cleaned) return '';
-  if (/^[a-zA-Z]:\//.test(cleaned) || /^file:\//i.test(cleaned)) {
-    return cleaned.split('/').pop() || '';
-  }
-  return cleaned.replace(/^\/+/, '');
-};
-
-const STORAGE_KEY = 'profile-card-onetap-v3';
-const DEFAULTS = {
-  name: 'Onetaplaspinas',
-  nickname: '@onetap.laspinas',
-  position: 'Owner',
-  company: 'Endless Connection',
-  bio: 'endless connection for you and your businesss',
-  contact1Label: 'CONTACT',
-  contact1Value: '0991 062 4915',
-  contact2Label: 'CONTACT',
-  contact2Value: '0962 423 8760',
-  address: 'las Piñas City, Philippines 1740',
-  email: 'onetaplaspinas@gmail.com',
-  email2: '',
-  photo: 'profile.jpg',
-  social: {
-    facebook: 'https://www.facebook.com/onetap.nfc.ph',
-    facebookPage: 'https://www.facebook.com/onetap.nfc.ph',
-    instagram: 'https://www.instagram.com/onetap.laspinas/',
-    linkedin: '',
-    Youtube: '',
-    whatsapp: '0991 062 4915'
-  }
-};
-
-function loadProfile() {
-  const saved = (() => {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { return null; }
-  })();
-
-  const finalProfile = saved && typeof saved === 'object'
-    ? { ...DEFAULTS, ...saved, photo: normalizePhotoPath(saved.photo || DEFAULTS.photo), social: { ...DEFAULTS.social, ...(saved.social || {}) } }
-    : { ...DEFAULTS, photo: normalizePhotoPath(DEFAULTS.photo) };
-
-  const cleanProfile = {
-    ...finalProfile,
-    photo: normalizePhotoPath(finalProfile.photo || DEFAULTS.photo),
-    social: {
-      ...DEFAULTS.social,
-      ...(finalProfile.social || {}),
-      facebook: DEFAULTS.social.facebook,
-      facebookPage: DEFAULTS.social.facebookPage,
-      instagram: DEFAULTS.social.instagram,
-      linkedin: DEFAULTS.social.linkedin,
-      Youtube: DEFAULTS.social.Youtube,
-      whatsapp: DEFAULTS.social.whatsapp
-    }
-  };
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cleanProfile));
-  return cleanProfile;
-}
-const PROFILE = loadProfile();
-const photoEl = document.getElementById('photo');
-const placeholderPhoto = `
-  <svg viewBox="0 0 390 523" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Profile photo placeholder">
-    <defs>
-      <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#ffb46b"/>
-        <stop offset=".5" stop-color="#e9527f"/>
-        <stop offset="1" stop-color="#4d3aa8"/>
-      </linearGradient>
-      <radialGradient id="glow" cx=".5" cy=".38" r=".5">
-        <stop offset="0" stop-color="#fff" stop-opacity=".35"/>
-        <stop offset="1" stop-color="#fff" stop-opacity="0"/>
-      </radialGradient>
-    </defs>
-    <rect width="390" height="523" fill="url(#bg)"/>
-    <rect width="390" height="523" fill="url(#glow)"/>
-    <path d="M40 523c0-92 65-146 155-146s155 54 155 146z" fill="#26123f" opacity=".55"/>
-    <circle cx="195" cy="255" r="72" fill="#26123f" opacity=".55"/>
-  </svg>
-`;
-
-function renderProfilePhoto() {
-  if (PROFILE.photo) {
-    const img = new Image();
-    img.src = PROFILE.photo;
-    img.alt = 'Profile photo';
-    img.onload = () => {
-      photoEl.innerHTML = '';
-      photoEl.appendChild(img);
-    };
-    img.onerror = () => {
-      photoEl.innerHTML = placeholderPhoto;
-    };
-    photoEl.appendChild(img);
-    return;
-  }
-  photoEl.innerHTML = placeholderPhoto;
-}
-renderProfilePhoto();
-
-/* ---------- Icons (line) ---------- */
-const svg = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
-const ICONS = {
-  back: svg('<path d="M19 12H5M12 19l-7-7 7-7"/>'),
-  edit: svg('<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>'),
-  out: svg('<path d="M7 17L17 7M8 7h9v9"/>'),
-  user: svg('<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/>'),
-  nick: svg('<circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>'),
-  job: svg('<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>'),
-  phone: svg('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.58 2.81.7A2 2 0 0 1 22 16.92z"/>'),
-  company: svg('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 8h.01M15 8h.01M9 12h.01M15 12h.01M10 21v-4h4v4"/>'),
-  pin: svg('<path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>'),
-  mail: svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'),
-  facebook: svg('<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>'),
-  instagram: svg('<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/>'),
-  linkedin: svg('<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>'),
-  wechat: svg('<path d="M9 4C5.4 4 2.5 6.3 2.5 9.2c0 1.6.9 3.1 2.3 4L4.3 15.5l2.4-1.2c.5.1 1 .2 1.5.2"/><path d="M21.5 14.2c0-2.6-2.5-4.7-5.5-4.7s-5.5 2.1-5.5 4.7 2.5 4.7 5.5 4.7c.7 0 1.3-.1 1.9-.3l2 1-.4-2c1.1-.8 2-2 2-3.4z"/>'),
-  whatsapp: svg('<path d="M3 21l1.65-4.9A9 9 0 1 1 8 19.4L3 21z"/><path d="M9 9c0 3.5 3 6.5 6 6l1-1.5-2-1-1 .8c-1-.5-1.8-1.3-2.3-2.3l.8-1-1-2z"/>'),
-  youtube: svg('<path d="M22 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.5a2.5 2.5 0 0 0-1.8 1.8C2 8.8 2 12 2 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.5a2.5 2.5 0 0 0 1.8-1.8C22 15.2 22 12 22 12z"/><path d="m10 9 5 3-5 3z"/>'),
-  telegram: svg('<path d="M22 3L2 11l7 2.5L11.5 21l3-5 5 3.5L22 3z"/><path d="M9 13.5L22 3"/>'),
-  link: svg('<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>')
-};
-document.querySelectorAll('[data-icon]').forEach(el => { el.innerHTML = ICONS[el.dataset.icon]; });
-
-/* ---------- Content ---------- */
-const strip = s => s.replace(/^@/, '');
-const digits = s => s.replace(/[^\d+]/g, '');
-const url = s => /^https?:\/\//i.test(s) ? s : 'https://' + s;
-
-function row({ icon, label, value, href, action }) {
-  if (!value) { value = '—'; href = undefined; action = undefined; }
-  const tappable = !!(href || action);
-  const el = document.createElement(href ? 'a' : action ? 'button' : 'div');
-  el.className = 'row' + (tappable ? ' tap' : '');
-  if (href) {
-    el.href = href;
-    if (/^https?:/.test(href)) { el.target = '_blank'; el.rel = 'noopener noreferrer'; }
-  }
-  if (action) { el.type = 'button'; el.addEventListener('click', () => action(el)); }
-  el.innerHTML =
-    `<span class="ico">${ICONS[icon]}</span>` +
-    `<span class="txt"><span class="lbl"></span><span class="val"></span></span>` +
-    (tappable ? `<span class="go">${ICONS.out}</span>` : '');
-  el.querySelector('.lbl').textContent = label;
-  el.querySelector('.val').textContent = value;
-  return el;
-}
-
-async function shareOrCopy(el, text) {
-  const val = el.querySelector('.val');
-  try {
-    if (navigator.share) { await navigator.share({ text }); return; }
-    await navigator.clipboard.writeText(text);
-    val.textContent = 'Copied';
-    setTimeout(() => { val.textContent = text; }, 1400);
-  } catch (e) { /* share cancelled or clipboard unavailable */ }
-}
-
-function saveContact() {
-  const escapeVCard = value => String(value || '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
-  const lines = [
-    'BEGIN:VCARD',
-    'VERSION:3.0',
-    `FN:${escapeVCard(P.name)}`,
-    'N:Onetap;;;;',
-    `ORG:${escapeVCard(P.company)}`,
-    `TITLE:${escapeVCard(P.position)}`,
-    `NOTE:${escapeVCard(P.bio)}`,
-    ...[...new Set([P.contact1Value, P.contact2Value, P.contact3Value].filter(Boolean))].map(value => `TEL;TYPE=CELL:${escapeVCard(value)}`),
-    `EMAIL;TYPE=INTERNET:${escapeVCard(P.email)}`,
-    `EMAIL;TYPE=INTERNET:${escapeVCard(P.email2)}`,
-    `ADR;TYPE=WORK:;;${escapeVCard(P.address)};;;;`,
-    `URL:${escapeVCard(P.social.facebook)}`,
-    `X-SOCIALPROFILE;TYPE=facebook:${escapeVCard(P.social.facebook)}`,
-    `X-SOCIALPROFILE;TYPE=facebook:${escapeVCard(P.social.facebookPage)}`,
-    `X-SOCIALPROFILE;TYPE=linkedin:${escapeVCard(P.social.linkedin)}`,
-    `X-SOCIALPROFILE;TYPE=youtube:${escapeVCard(P.social.Youtube)}`,
-    `X-SOCIALPROFILE;TYPE=whatsapp:https://wa.me/${digits(P.social.whatsapp).replace(/^\+/, '')}`,
-    'END:VCARD'
-  ].filter(line => !line.endsWith(':'));
-  const blob = new Blob([lines.join('\r\n')], { type: 'text/vcard;charset=utf-8' });
-  const downloadUrl = URL.createObjectURL(blob);
-  const download = document.createElement('a');
-  download.href = downloadUrl;
-  download.download = `${(P.nickname || 'contact').replace(/[^a-z0-9-_]+/gi, '-')}.vcf`;
-  download.click();
-  setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000);
-}
-
-const P = PROFILE, S = PROFILE.social;
-document.getElementById('heroName').textContent = P.name;
-document.getElementById('heroHandle').textContent = '@' + strip(P.nickname).toLowerCase().replace(/\s+/g, '');
-
-const companyName = P.company || 'University of Perpetual Help';
-document.getElementById('companyStatA').textContent = companyName;
-
-document.getElementById('details').append(
-  row({ icon: 'user', label: 'Save contact', value: 'Add to contacts', action: saveContact }),
-  row({ icon: 'user',    label: 'Name',           value: P.name }),
-  row({ icon: 'user',    label: 'Bio',            value: P.bio }),
-  row({ icon: 'company', label: 'Company',        value: P.company }),
-  row({ icon: 'job',     label: 'Position',       value: P.position }),
-  ...[P.contact1Value, P.contact2Value, P.contact3Value].map((value, index) => value ? row({
-    icon: 'phone',
-    label: P['contact' + (index + 1) + 'Label'] || 'Contact ' + (index + 1),
-    value,
-    href: 'tel:' + digits(value)
-  }) : []),
-  row({ icon: 'pin',     label: 'Address',        value: P.address,
-        href: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(P.address) }),
-  row({ icon: 'mail',    label: 'Gmail',          value: P.email,  href: 'mailto:' + P.email }),
-);
-
-const socialEntries = [
-  S.whatsapp ? row({ icon: 'whatsapp', label: 'WhatsApp', value: S.whatsapp, href: 'https://wa.me/' + digits(S.whatsapp).replace(/^\+/, '') }) : null,
-  S.facebook ? row({ icon: 'facebook', label: 'Facebook', value: S.facebook, href: S.facebook }) : null,
-  S.instagram ? row({ icon: 'instagram', label: 'Instagram', value: S.instagram, href: S.instagram }) : null,
-  S.linkedin ? row({ icon: 'linkedin', label: 'LinkedIn', value: S.linkedin, href: S.linkedin }) : null,
-  S.youtube ? row({ icon: 'youtube', label: 'YouTube', value: S.youtube, href: S.youtube }) : null,
-  row({ icon: 'link', label: 'Leave a review', value: 'Facebook page', href: S.facebookPage || S.facebook })
-].filter(Boolean);
-
-document.getElementById('socials').append(...socialEntries);
-
-const reviewItems = [
-  {
-    name: 'Ariane T.',
-    text: 'The service felt premium and the layout was clean. It helped my business look more professional online.'
-  },
-  {
-    name: 'Mark L.',
-    text: 'Very easy to order and the customization was great. They responded fast and the design looked exactly how I wanted.'
-  },
-  {
-    name: 'Janelle R.',
-    text: 'I loved the quality and the details. The results made my page easier for customers to trust and reach.'
-  }
-];
-
-const reviewsWrap = document.getElementById('reviews');
-const reviewSummary = document.createElement('div');
-reviewSummary.className = 'review-summary';
-reviewSummary.innerHTML = `
-  <div>
-    <div class="review-score">4.9</div>
-    <div class="review-stars">★★★★★</div>
+<div class="app" id="home">
+  <div class="top">
+    <label class="av" id="av">+<input type="file" accept="image/*" id="avin"></label>
+    <button class="ib sq" style="height:28px;width:28px;background:none" id="shr" aria-label="Share"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5"/></svg></button>
   </div>
-  <div class="review-stars">Trusted by local customers</div>
-`;
-reviewsWrap.appendChild(reviewSummary);
 
-reviewItems.forEach(item => {
-  const card = document.createElement('div');
-  card.className = 'review-card';
-  card.innerHTML = `
-    <strong>${item.name}</strong>
-    <p>"${item.text}"</p>
-  `;
-  reviewsWrap.appendChild(card);
-});
-
-const faqItems = [
-  {
-    question: 'How do I order?',
-    answer: 'You can choose your preferred package, tap the order button, and message us directly on Facebook to confirm your request.'
-  },
-  {
-    question: 'Do you offer customization?',
-    answer: 'Yes. We offer logo design, profile customization, layout setup, and other design support depending on the package you choose.'
-  },
-  {
-    question: 'Can I request a custom package?',
-    answer: 'Absolutely. If you want a package made for your business needs, send us a message and we can guide you with the best option.'
-  }
-];
-
-const faqWrap = document.getElementById('faq');
-faqItems.forEach(item => {
-  const card = document.createElement('div');
-  card.className = 'faq-item';
-  card.innerHTML = `
-    <h4 class="faq-question">${item.question}</h4>
-    <p class="faq-answer">${item.answer}</p>
-  `;
-  faqWrap.appendChild(card);
-});
-
-const productOptions = [
-  {
-    name: 'ONETAP KEYCHAIN',
-    price: 'P 199',
-    features: [
-      'COMPACT TAP KEYCHAIN FOR QUICK SOCIAL SHARING',
-      'FREE CUSTOMIZATION LOGO DESIGN'
-    ]
-  },
-  {
-    name: 'ONETAP BUSINESS CARD',
-    price: 'P 299',
-    features: [
-      'PROFILE IMAGE CUSTOMIZATION',
-      'BASIC CUSTOMIZATION',
-      'LOGO ONLY CARD'
-    ]
-  },
-  {
-    name: 'VIP PACKAGE',
-    price: 'P 599',
-    features: [
-      'FULL CUSTOMIZATION',
-      'CONTACT & CARD',
-      'PROFILE IMAGE CUSTOMIZATION',
-      '4-6 IMAGE SCROLLING CAROUSEL'
-    ]
-  },
-  {
-    name: 'ONETAP SHOP STAND',
-    price: 'P 699',
-    features: [
-      '3 LINKS SOCIAL MEDIA TO CONNECT',
-      'FREE CUSTOMIZATION LAYOUT'
-    ]
-  }
-];
-
-const productOptionsWrap = document.getElementById('productOptions');
-productOptions.forEach(product => {
-  const card = document.createElement('div');
-  card.className = 'product-option';
-  card.innerHTML = `
-    <div class="product-option-header">
-      <h4 class="product-name">${product.name}</h4>
-      <span class="product-price">${product.price}</span>
+  <div class="box wallet" style="padding:10px">
+    <div class="card" aria-label="OneTapLasPiñas NFC smart card">
+      <div class="logo"><i class="dot"></i>OneTapLasPiñas</div>
+      <small>NFC SMART CARD</small>
+      <div class="tap"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M8 6c3 3.5 3 8.5 0 12M12.5 4c4.5 5 4.5 11 0 16M17 2c6 6.5 6 13.5 0 20"/></svg>TAP TO CONNECT</div>
+      <label class="big" id="pf"><span>+ Photo</span><input type="file" accept="image/*" id="pfin"></label>
     </div>
-    <ul class="product-features">
-      ${product.features.map(feature => `<li>${feature}</li>`).join('')}
-    </ul>
-    <button class="product-order-btn" type="button">Direct message to order</button>
-  `;
+  </div>
 
-  const orderButton = card.querySelector('.product-order-btn');
-  orderButton.addEventListener('click', () => {
-    const message = `Hi! I want to order the ${product.name} (${product.price}).`;
-    const orderUrl = `https://m.me/${(S.facebookPage || S.facebook || 'onetap.nfc.ph').replace(/^https?:\/\/(?:www\.)?facebook\.com\//i, '').replace(/\/$/, '')}`;
-    window.open(`${orderUrl}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
-  });
+  <div class="acts">
+    <button class="act" id="save"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="8" r="4"/><path d="M3 21a7 7 0 0114 0M19 8v6M16 11h6"/></svg></div><b>Add to contacts</b></button>
+  </div>
 
-  productOptionsWrap.appendChild(card);
-});
+  <div class="box list" id="contact">
+    <h4 style="margin-bottom:6px">Contact info</h4>
+    <div class="row"><div class="ic">◉</div><div><small>Name</small><span>Onetaplaspinas</span></div></div>
+    <div class="row"><div class="ic">i</div><div><small>Bio</small><span>Endless connection for you and your business</span></div></div>
+    <div class="row"><div class="ic">▣</div><div><small>Company</small><span>Endless Connection</span></div></div>
+    <div class="row"><div class="ic">★</div><div><small>Position</small><span>Owner</span></div></div>
+    <a class="row" href="tel:09910624915"><div class="ic">✆</div><div><small>Contact</small><span>0991 062 4915</span></div></a>
+    <a class="row" href="tel:09624238760"><div class="ic">✆</div><div><small>Contact</small><span>0962 423 8760</span></div></a>
+    <a class="row" href="https://www.google.com/maps/search/?api=1&query=Las%20Pi%C3%B1as%20City%2C%20Philippines%201740"><div class="ic">⌖</div><div><small>Address</small><span>Las Piñas City, Philippines 1740</span></div></a>
+    <a class="row" href="mailto:onetaplaspinas@gmail.com"><div class="ic">✉</div><div><small>Gmail</small><span>onetaplaspinas@gmail.com</span></div></a>
+  </div>
 
-document.getElementById('leaveReview').addEventListener('click', () => {
-  const reviewUrl = S.facebookPage || S.facebook || 'https://www.facebook.com/onetap.nfc.ph';
-  window.open(reviewUrl, '_blank', 'noopener,noreferrer');
-});
+  <div class="box" id="gallery">
+    <h4>Gallery</h4><p>Tap a tile to add your photo</p>
+    <div class="grid">
+      <label class="tile"><em>Photo 1</em><input type="file" accept="image/*"></label>
+      <label class="tile"><em>Photo 2</em><input type="file" accept="image/*"></label>
+      <label class="tile"><em>Photo 3</em><input type="file" accept="image/*"></label>
+      <label class="tile"><em>Photo 4</em><input type="file" accept="image/*"></label>
+    </div>
+  </div>
 
-/* ---------- Follow toggle ---------- */
-const follow = document.getElementById('follow');
-follow.addEventListener('click', () => {
-  const email = (P.email || 'hello@example.com').trim();
-  window.location.href = 'mailto:' + email + '?subject=' + encodeURIComponent('Hello ' + P.name);
-});
-document.querySelectorAll('.topbar .glass').forEach(b => b.addEventListener('click', e => e.preventDefault()));
+  <div class="box list" id="social">
+    <h4 style="margin-bottom:6px">Social media</h4>
+    <a class="row" href="https://wa.me/09910624915"><div class="ic" style="background:#25d366">☏</div><div><small>WhatsApp</small><span>0991 062 4915</span></div></a>
+    <a class="row" href="https://www.facebook.com/onetap.nfc.ph"><div class="ic" style="background:#1877f2">f</div><div><small>Facebook</small><span>onetap.nfc.ph</span></div></a>
+    <a class="row" href="https://www.instagram.com/onetap.laspinas/"><div class="ic" style="background:linear-gradient(135deg,#feda75,#d62976,#4f5bd5)">◎</div><div><small>Instagram</small><span>@onetap.laspinas</span></div></a>
+  </div>
 
-/* ---------- Scroll-reveal engine ---------- */
-const app = document.getElementById('app');
-const hero = document.getElementById('hero');
-const sheet = document.getElementById('sheet');
-const head = document.getElementById('sheetHead');
-const list = document.getElementById('list');
+  <div class="box ref">
+    <div class="txt"><h4>Leave a review</h4><p>Loved our service? Tell others on our Facebook page.</p><a class="btn" href="https://www.facebook.com/onetap.nfc.ph">Review now</a></div>
+    <div class="orb"></div>
+  </div>
+</div>
 
-let p = 0, open = false;
-const travel = () => app.clientHeight * 0.6;
-const setP = v => { p = Math.max(0, Math.min(1, v)); app.style.setProperty('--p', p); };
-
-function snap(next) {
-  open = next;
-  app.classList.remove('dragging');
-  setP(next ? 1 : 0);
-  sheet.inert = !next;
-  hero.inert = next;
-  sheet.setAttribute('aria-hidden', String(!next));
-  if (!next) list.scrollTop = 0;
-}
-
-/* Pointer drag on the photo card (swipe up) and on the sheet header (swipe down) */
-function attachDrag(el) {
-  let startY = 0, startP = 0, moved = false, id = null, lastY = 0, lastT = 0, vy = 0;
-  el.addEventListener('pointerdown', e => {
-    if (e.pointerType === 'mouse' && e.button !== 0) return;
-    startY = lastY = e.clientY; startP = p; moved = false; id = e.pointerId; lastT = performance.now(); vy = 0;
-  });
-  el.addEventListener('pointermove', e => {
-    if (id !== e.pointerId) return;
-    const dy = startY - e.clientY;
-    if (!moved && Math.abs(dy) > 6) {
-      moved = true;
-      app.classList.add('dragging');
-      try { el.setPointerCapture(id); } catch (_) {}
-    }
-    if (moved) {
-      const now = performance.now();
-      vy = (lastY - e.clientY) / Math.max(1, now - lastT);
-      lastY = e.clientY; lastT = now;
-      setP(startP + dy / travel());
-    }
-  });
-  const end = e => {
-    if (id !== e.pointerId) return;
-    id = null;
-    if (!moved) return;
-    el.addEventListener('click', ev => { ev.stopPropagation(); ev.preventDefault(); }, { capture: true, once: true });
-    snap(vy > 0.4 ? true : vy < -0.4 ? false : p > 0.5);
-  };
-  el.addEventListener('pointerup', end);
-  el.addEventListener('pointercancel', end);
-}
-attachDrag(hero);
-attachDrag(head);
-
-/* Touch: pulling down while the detail list is at the top closes the sheet */
-let ty = 0, pulling = false;
-list.addEventListener('touchstart', e => { ty = e.touches[0].clientY; pulling = false; }, { passive: true });
-list.addEventListener('touchmove', e => {
-  const y = e.touches[0].clientY;
-  if (!pulling && list.scrollTop <= 0 && y - ty > 6) {
-    pulling = true; ty = y; app.classList.add('dragging');
-  }
-  if (pulling) { e.preventDefault(); setP(1 - (y - ty) / travel()); }
-}, { passive: false });
-const endPull = () => { if (pulling) { pulling = false; snap(p > 0.7); } };
-list.addEventListener('touchend', endPull);
-list.addEventListener('touchcancel', endPull);
-
-/* Mouse wheel / trackpad */
-let lock = 0, lastWheel = 0;
-app.addEventListener('wheel', e => {
-  const now = Date.now();
-  const newGesture = now - lastWheel > 150;
-  lastWheel = now;
-  if (now < lock) return;
-  if (!open && e.deltaY > 8) { snap(true); lock = now + 600; }
-  else if (open && newGesture && list.scrollTop <= 0 && e.deltaY < -8) { snap(false); lock = now + 600; }
-}, { passive: true });
-
-/* Buttons + keyboard */
-document.getElementById('openBtn').addEventListener('click', () => snap(true));
-document.getElementById('closeBtn').addEventListener('click', () => snap(false));
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && open) snap(false);
-  if (e.key === 'ArrowUp' && !open && document.activeElement === document.body) snap(true);
-});
-
-/* Service Worker registration for offline support */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).catch(error => {
-      console.error('Service worker registration failed:', error);
-    });
-  });
-}
+<nav class="nav"><div>
+  <a class="on" href="#home"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9H4z"/></svg>Home</a>
+  <a href="#contact"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>Contact</a>
+  <a href="#gallery"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.500"/><rect x="14" y="3" width="7" height="7" rx="1.500"/><rect x="3" y="14" width="7" height="7" rx="1.500"/><rect x="14" y="14" width="7" height="7" rx="1.500"/></svg>Gallery</a>
+  <a href="#social"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14v10H9l-4 4z"/></svg>Social</a>
+</div></nav>
+<div class="toast" id="toast"></div>
+<script>
+const toast=m=>{const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)};
+const rd=(f,cb)=>{if(!f)return;const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(f)};
+document.querySelectorAll('.tile input').forEach(i=>i.addEventListener('change',e=>rd(e.target.files[0],u=>{const t=i.parentElement;t.style.backgroundImage='url('+u+')';t.querySelector('em').style.display='none'})));
+const setPhoto=e=>rd(e.target.files[0],u=>{const v='url('+u+')';const p=document.getElementById('pf');p.style.backgroundImage=v;p.querySelector('span').style.display='none';const a=document.getElementById('av');a.style.backgroundImage=v;a.firstChild.textContent=''});
+document.getElementById('pfin').addEventListener('change',setPhoto);
+document.getElementById('avin').addEventListener('change',setPhoto);
+const vcf='BEGIN:VCARD\nVERSION:3.0\nFN:Onetaplaspinas\nORG:Endless Connection\nTITLE:Owner\nTEL;TYPE=CELL:09910624915\nTEL;TYPE=CELL:09624238760\nEMAIL:onetaplaspinas@gmail.com\nADR:;;Las Piñas City;;;1740;Philippines\nURL:https://www.facebook.com/onetap.nfc.ph\nNOTE:Endless connection for you and your business\nEND:VCARD';
+document.getElementById('save').onclick=async()=>{try{await navigator.clipboard.writeText(vcf);toast('Contact card copied')}catch(e){toast('Tap a number to call or save it')}};
+document.getElementById('shr').onclick=async()=>{try{if(navigator.share){await navigator.share({title:'OneTapLasPiñas',url:location.href})}else{await navigator.clipboard.writeText(location.href);toast('Link copied')}}catch(e){}};
 </script>
 </body>
 </html>
