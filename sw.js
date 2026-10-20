@@ -1,11 +1,14 @@
-const CACHE_NAME = 'profile-card-v5';
+const CACHE_NAME = 'profile-card-v7';
 const CACHE_PREFIX = 'profile-card-';
 const ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/logo.jpg',
-  '/profile.jpg'
+  '/profile.png',
+  '/product/1.png',
+  '/product/2.png',
+  '/product/3.png'
 ];
 
 self.addEventListener('install', event => {
