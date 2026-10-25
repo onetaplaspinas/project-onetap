@@ -379,7 +379,13 @@
     <script>
       /* PERMANENT IMAGES (shown to everyone who taps your card):
    put your image file names or links here, e.g. logo:'logo.png', p1:'product1.jpg' */
-      const IMAGES = { logo: "profile.png", p1: "", p2: "", p3: "", p4: "" };
+      const IMAGES = {
+        logo: "profile.png",
+        p1: "product/1.png",
+        p2: "product/2.png",
+        p3: "product/3.png",
+        p4: "product/4.png",
+      };
 
       const KEY = "onetap-images";
       let saved = {};
@@ -490,7 +496,7 @@
         r.readAsDataURL(f);
       });
 
-      /* vCard */
+      /* vCard & Android Contact Intent */
       const vcard = [
         "BEGIN:VCARD",
         "VERSION:3.0",
@@ -504,18 +510,53 @@
         "URL;TYPE=Instagram:https://instagram.com/onetap.laspinas",
         "END:VCARD",
       ].join("\r\n");
+
+      // Try to open Android Contacts app with pre-filled information
+      function openAndroidContacts() {
+        // Check if we're on Android with a compatible browser
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isChrome = /Chrome/i.test(navigator.userAgent) && !/Version/.test(navigator.userAgent);
+
+        if (isAndroid && isChrome) {
+          // Use intent to open contacts with pre-filled info
+          const vcardBlob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
+          const vcardUrl = URL.createObjectURL(vcardBlob);
+
+          // Try to open via intent scheme (Android 10+)
+          const intentUrl = "intent://contact/edit#Intent;package=com.android.contacts;action=android.intent.action.EDIT;type=vcard/*;SORIGIN=OnetapLasPiñas;EXTRA_NAME=Onetaplaspinas;EXTRA_EMAIL=;EXTRA_ORG=Endless+Connection;EXTRA_PHONE=+639910624915;S.browser_fallback_url=https%3A%2F%2Fonetap.nfc.ph%2F#*";
+
+          const a = document.createElement("a");
+          a.href = intentUrl;
+          a.target = "_blank";
+          // Click after a small delay to allow intent resolution
+          setTimeout(() => {
+            a.click();
+            URL.revokeObjectURL(vcardUrl);
+          }, 300);
+          msg("Opening contacts app...");
+          return true;
+        }
+        return false;
+      }
+
       document.getElementById("add").addEventListener("click", () => {
-        const url = URL.createObjectURL(
-          new Blob([vcard], { type: "text/vcard;charset=utf-8" }),
-        );
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "Onetaplaspinas.vcf";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 5000);
-        msg("Contact file ready — open it to save");
+        // Try opening Android Contacts app first
+        const opened = openAndroidContacts();
+
+        // If not on Android/Chrome, fall back to VCF download
+        if (!opened) {
+          const url = URL.createObjectURL(
+            new Blob([vcard], { type: "text/vcard;charset=utf-8" }),
+          );
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "Onetaplaspinas.vcf";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
+          msg("Contact file ready — open it to save in your contacts");
+        }
       });
     </script>
   </body>
